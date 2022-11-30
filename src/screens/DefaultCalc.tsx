@@ -3,8 +3,11 @@ import { useState } from "react";
 
 export default function DefaultCalc() {
   const [darkMode, setDarkMode] = useState(false);
-  const [currentNumber, setCurrentNumber] = useState("5");
-  const [lastNumber, setLastNumber] = useState("2 + 2");
+  const [currentNumber, setCurrentNumber] = useState("0");
+  const [lastNumber, setLastNumber] = useState("");
+  const [currentOperator, setCurrentOperator] = useState("");
+  const [num1, setNum1] = useState(0);
+  const [num2, setNum2] = useState(0);
 
   const buttons = [
     "AC",
@@ -30,30 +33,41 @@ export default function DefaultCalc() {
   ];
 
   function calculator() {
-    const splitNumbers = currentNumber.split(" ");
-    const fistNumber = parseFloat(splitNumbers[0]);
-    const lastNumber = parseFloat(splitNumbers[2]);
-    const operator = splitNumbers[1];
-    console.log("FN: " + fistNumber);
 
-    switch (operator) {
-      case "+":
-        setCurrentNumber((fistNumber + lastNumber).toString());
-        return;
-      case "-":
-        setCurrentNumber((fistNumber - lastNumber).toString());
-        return;
-      case "*":
-        setCurrentNumber((fistNumber * lastNumber).toString());
-        return;
-      case "/":
-        setCurrentNumber((fistNumber / lastNumber).toString());
-        return;
-    }
+
+
+    // const splitNumbers = currentNumber.split(" ");
+    // const fistNumber = parseFloat(splitNumbers[0]);
+    // const lastNumber = parseFloat(splitNumbers[2]);
+    // const operator = splitNumbers[1];
+    // console.log("FN: " + fistNumber);
+
+    // switch (operator) {
+    //   case "+":
+    //     setCurrentNumber((fistNumber + lastNumber).toString());
+    //     return;
+    //   case "-":
+    //     setCurrentNumber((fistNumber - lastNumber).toString());
+    //     return;
+    //   case "*":
+    //     setCurrentNumber((fistNumber * lastNumber).toString());
+    //     return;
+    //   case "/":
+    //     setCurrentNumber((fistNumber / lastNumber).toString());
+    //     return;
+    // }
   }
 
   function handleInput(btnPressed) {
-    console.log(btnPressed);
+    const splitNumbers = currentNumber.split(" ");
+
+    if(typeof btnPressed === "number"){
+      if(currentNumber === "0"){
+        setCurrentNumber("" + btnPressed);
+      } else {
+        setCurrentNumber(currentNumber + btnPressed);
+      }
+    }
 
     if (
       btnPressed === "+" ||
@@ -61,16 +75,34 @@ export default function DefaultCalc() {
       btnPressed === "*" ||
       btnPressed === "/"
     ) {
-      setCurrentNumber(currentNumber + " " + btnPressed + " ");
+      setNum1(parseFloat(currentNumber));
+      console.log("Current Operator: " + currentOperator)
+
+      if(splitNumbers[1] == ""){
+        setCurrentOperator("" + btnPressed);
+        setCurrentNumber(num1 + " " + currentOperator)
+        
+      } else if() {
+        setCurrentOperator("" + btnPressed);
+        setCurrentNumber(currentNumber.substring(0,currentNumber.length - 2));
+        setCurrentNumber(num1 + " " + currentOperator)
+      }
+      
       return;
     }
     switch (btnPressed) {
       case "DEL":
-        setCurrentNumber(currentNumber.substring(0, currentNumber.length - 1));
+        if(currentNumber.length === 1){
+          setCurrentNumber("0");
+        } else {
+          setCurrentNumber(currentNumber.substring(0, currentNumber.length - 2));
+        }
         return;
       case "AC":
         setLastNumber("");
-        setCurrentNumber("");
+        setCurrentNumber("0");
+        setCurrentOperator("");
+        setNum1(0);
         return;
       case "=":
         setLastNumber(currentNumber + " = ");
@@ -80,14 +112,15 @@ export default function DefaultCalc() {
         return;
     }
 
-    setCurrentNumber(currentNumber + btnPressed);
+    
+
   }
 
   return (
     <VStack>
       <VStack
         width="full"
-        minHeight={370}
+        minHeight={240}
         alignItems="flex-end"
         justifyContent="flex-end"
         backgroundColor={darkMode ? "#282f3b" : "#f5f5f5"}
@@ -118,7 +151,7 @@ export default function DefaultCalc() {
               alignItems="center"
               justifyContent="center"
               minWidth={90}
-              minHeight={100}
+              minHeight={90}
               flex={2}
               backgroundColor="amber.400"
             >
@@ -131,7 +164,7 @@ export default function DefaultCalc() {
               alignItems="center"
               justifyContent="center"
               minWidth={90}
-              minHeight={100}
+              minHeight={90}
               flex={2}
               backgroundColor={
                 typeof button === "number" || button === "." || button === "DEL"
